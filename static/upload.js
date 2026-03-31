@@ -632,7 +632,7 @@ function initUpload(project, cdnBase) {
     (function () {
         const btn = document.getElementById("load-more-btn");
         if (!btn) return;
-        let offset  = parseInt(btn.dataset.offset || "200");
+        let offset  = parseInt(btn.dataset.offset || "50");
         const grid  = document.getElementById("image-grid");
         if (!grid) return;
 
@@ -641,7 +641,7 @@ function initUpload(project, cdnBase) {
             btn.disabled    = true;
             btn.textContent = "Loading…";
             try {
-                const res  = await fetch(`/panel/projects/${project}/images/page?offset=${offset}&limit=200`);
+                const res  = await fetch(`/panel/projects/${project}/images/page?offset=${offset}&limit=50`);
                 const data = await res.json();
                 if (!data.ok) { showToast(`Load failed: ${data.error}`, "error"); btn.disabled = false; btn.textContent = origText; return; }
                 data.images.forEach((img, i) => { const c = buildImageCard(img.name, img.sizes, offset + i); grid.appendChild(c); bindNewCard(c); bindSizePicker(c); });
@@ -653,7 +653,7 @@ function initUpload(project, cdnBase) {
                 } else {
                     const rem = data.total - offset;
                     btn.disabled    = false;
-                    btn.textContent = "Load 200 more";
+                    btn.textContent = "Load 50 more";
                     if (countEl) countEl.textContent = `showing ${offset} of ${data.total}`;
                 }
             } catch (err) {
