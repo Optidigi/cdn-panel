@@ -45,6 +45,16 @@ Set via `.env` at the stack root on the server. Never committed to git.
 
 ## Local development
 
+**PowerShell:**
+```powershell
+pip install -r requirements.txt
+$env:PANEL_USERNAME='admin'
+$env:PANEL_PASSWORD_HASH=$(python -c "import bcrypt; print(bcrypt.hashpw(b'dev', bcrypt.gensalt()).decode())")
+$env:PANEL_SECRET_KEY='dev'
+flask --app app run --debug
+```
+
+**Linux/macOS:**
 ```bash
 pip install -r requirements.txt
 PANEL_USERNAME=admin PANEL_PASSWORD_HASH=$(python -c "import bcrypt; print(bcrypt.hashpw(b'dev', bcrypt.gensalt()).decode())") PANEL_SECRET_KEY=dev flask --app app run --debug
