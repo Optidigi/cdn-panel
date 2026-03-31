@@ -555,7 +555,7 @@ def project_images_page(project):
 
     try:
         offset = max(0, int(request.args.get("offset", 0)))
-        limit  = min(500, max(1, int(request.args.get("limit", 200))))
+        limit  = min(500, max(1, int(request.args.get("limit", 50))))
     except ValueError:
         return jsonify({"ok": False, "error": "invalid params"}), 400
 
