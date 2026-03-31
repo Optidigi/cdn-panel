@@ -37,7 +37,7 @@ MAX_UPLOAD_SIZE = MAX_UPLOAD_MB * 1024 * 1024
 CDN_BASE_URL = os.environ.get("CDN_BASE_URL", "").rstrip("/")
 
 # How many images to render server-side on first page load
-IMAGES_DISPLAY_LIMIT = 200
+IMAGES_DISPLAY_LIMIT = 50
 
 # Login rate limiting
 LOGIN_MAX_ATTEMPTS   = 10
