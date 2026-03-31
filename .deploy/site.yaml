@@ -1,0 +1,23 @@
+site_name: cdn-panel
+image: ghcr.io/optidigi/cdn-panel:latest
+domain: cdn.optidigi.nl
+container_port: 8080
+healthcheck_path: /health
+public_base_url: https://cdn.optidigi.nl/panel
+
+startup_path_prefix: /panel
+
+# NPM host for cdn.optidigi.nl is pre-existing and shared with the nginx CDN service.
+# Do not create or overwrite it automatically.
+needs_npm: false
+needs_uptime_kuma: true
+
+volumes:
+  - /srv/data/ops/cdn:/data/cdn
+
+env_files:
+  - /srv/ops/infra/stacks/cdn/.env
+
+kuma:
+  group: CDN
+  description: CDN panel – image upload and management UI
