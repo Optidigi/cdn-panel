@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CDN Panel — Projects</title>
+    <script>
+        document.documentElement.classList.add("cdn-no-transition");
+        if (localStorage.getItem("cdn-theme") !== "light") {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
+        requestAnimationFrame(() => document.documentElement.classList.remove("cdn-no-transition"));
+    </script>
+    <link rel="stylesheet" href="{{ url_for('panel.static', filename='tailwind.css') }}">
+    <link rel="stylesheet" href="{{ url_for('panel.static', filename='style.css') }}">
+</head>
+<body class="bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-white min-h-screen transition-colors duration-200">
+
+    <!-- Nav -->
+    <nav class="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border-b border-slate-200 dark:border-zinc-700 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
+        <div class="text-lg font-black tracking-tight">CDN<span class="text-brand-500">.</span></div>
+        <div class="flex items-center gap-3">
+            <!-- Theme toggle -->
+            <button data-theme-toggle
+                class="flex items-center gap-0.5 bg-slate-100 dark:bg-zinc-800 rounded-full p-1 transition-colors">
+                <span class="w-6 h-6 flex items-center justify-center rounded-full transition-all bg-white dark:bg-transparent shadow-sm dark:shadow-none text-amber-500 dark:text-zinc-600">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.166 17.834a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 001.061-1.06l-1.59-1.591zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.166 6.166a.75.75 0 001.06-1.06L5.635 3.515a.75.75 0 10-1.06 1.06l1.59 1.591z"/>
+                    </svg>
+                </span>
+                <span class="w-6 h-6 flex items-center justify-center rounded-full transition-all bg-transparent dark:bg-zinc-700 text-slate-300 dark:text-zinc-300">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/>
+                    </svg>
+                </span>
+            </button>
+            <a href="{{ url_for('panel.logout') }}"
+               class="text-sm text-slate-400 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-white transition-colors">
+                Sign out
+            </a>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 py-10 space-y-8">
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for fcat, msg in messages %}
+        <div class="cdn-flash flex items-center justify-between gap-3 border rounded-xl px-4 py-3 text-sm
+                    {% if fcat == 'error' %}bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400
+                    {% else %}bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400{% endif %}">
+            <span>{{ msg }}</span>
+            <button onclick="dismissFlash(this)" class="shrink-0 opacity-50 hover:opacity-100 transition-opacity" aria-label="Dismiss">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+        {% endwith %}
+
+        <!-- Header -->
+        <div>
+            <h1 class="text-xl font-bold">Projects</h1>
+            <p class="text-sm text-slate-400 dark:text-zinc-500 mt-0.5">
+                {{ projects|length }} project{% if projects|length != 1 %}s{% endif %}
+            </p>
+        </div>
+
+        <!-- Project grid + New Project card (always in the same grid) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {% for p in projects %}
+            <div class="relative group/card">
+                <a href="{{ url_for('panel.project_detail', project=p.name) }}"
+                   class="group bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700
+                          hover:border-slate-300 dark:hover:border-zinc-600
+                          rounded-2xl p-5 transition-all hover:shadow-md dark:hover:shadow-zinc-950/50 block">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-9 h-9 bg-brand-50 dark:bg-brand-500/10 border border-brand-100 dark:border-brand-500/20
+                                    rounded-xl flex items-center justify-center text-brand-500 font-bold text-sm">
+                            {{ p.name[0].upper() }}
+                        </div>
+                        <svg class="w-4 h-4 text-slate-300 dark:text-zinc-600 group-hover:text-slate-400 dark:group-hover:text-zinc-500 transition-colors mt-0.5"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                    <p class="font-semibold text-sm mb-1">{{ p.name }}</p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-zinc-300 mb-3 tabular-nums">{{ p.total }}</p>
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for cat in p.categories %}
+                        {% if p.counts.get(cat, 0) > 0 %}
+                        <span class="text-xs bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 px-2 py-0.5 rounded-full">
+                            {{ cat }} {{ p.counts.get(cat, 0) }}
+                        </span>
+                        {% endif %}
+                        {% endfor %}
+                        {% if p.total == 0 %}
+                        <span class="text-xs text-slate-300 dark:text-zinc-700">Empty</span>
+                        {% endif %}
+                    </div>
+                </a>
+
+                <!-- Delete button: bottom-right, reveals on card hover -->
+                <button data-delete-project="{{ p.name }}"
+                        class="absolute bottom-3 right-3 opacity-0 group-hover/card:opacity-100
+                               w-7 h-7 flex items-center justify-center rounded-lg
+                               text-slate-300 dark:text-zinc-600
+                               hover:text-red-500 dark:hover:text-red-400
+                               hover:bg-red-50 dark:hover:bg-red-500/10
+                               transition-all duration-150 z-10"
+                        title="Delete project">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </button>
+            </div>
+            {% endfor %}
+
+            <!-- New Project card — always last item in grid -->
+            <div class="bg-white dark:bg-zinc-900 border border-dashed border-slate-200 dark:border-zinc-700
+                        hover:border-slate-300 dark:hover:border-zinc-600
+                        rounded-2xl p-5 transition-colors flex flex-col justify-center min-h-[160px]">
+                <h2 class="text-sm font-semibold mb-3 text-slate-700 dark:text-zinc-300">New Project</h2>
+                <form method="post" action="{{ url_for('panel.create_project') }}" class="flex items-center gap-2 flex-wrap">
+                    <input type="text" name="name" placeholder="project-name" required pattern="[a-zA-Z0-9_-]+"
+                        class="bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700
+                               text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm
+                               placeholder-slate-300 dark:placeholder-zinc-600
+                               focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+                               transition-colors flex-1 min-w-0">
+                    <button type="submit"
+                        class="bg-brand-600 hover:bg-brand-500 active:bg-brand-700 text-white text-sm font-medium
+                               px-4 py-2 rounded-lg transition-colors shrink-0">
+                        Create
+                    </button>
+                </form>
+                <p class="text-xs text-slate-300 dark:text-zinc-600 mt-2">Letters, numbers, hyphens, underscores</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="{{ url_for('panel.static', filename='modal.js') }}"></script>
+    <script>
+        // theme toggle
+        document.querySelectorAll("[data-theme-toggle]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.documentElement.classList.add("cdn-transitioning");
+                const isDark = document.documentElement.classList.toggle("dark");
+                localStorage.setItem("cdn-theme", isDark ? "dark" : "light");
+                setTimeout(() => document.documentElement.classList.remove("cdn-transitioning"), 200);
+            });
+        });
+
+        // flash dismiss helper + auto-dismiss after 5s
+        function dismissFlash(btn) {
+            const el = btn.closest(".cdn-flash");
+            if (!el) return;
+            el.style.transition = "opacity 0.3s, transform 0.3s";
+            el.style.opacity    = "0";
+            el.style.transform  = "translateY(-4px)";
+            setTimeout(() => el.remove(), 300);
+        }
+        document.querySelectorAll(".cdn-flash").forEach(el => {
+            setTimeout(() => dismissFlash(el.querySelector("button")), 5000);
+        });
+
+        document.querySelectorAll("[data-delete-project]").forEach(btn => {
+            btn.addEventListener("click", async e => {
+                e.preventDefault();
+                e.stopPropagation();
+                const name = btn.dataset.deleteProject;
+                if (!await cdnConfirm(`All files in "${name}" will be permanently removed.`, { title: `Delete project "${name}"?`, confirmText: "Delete project" })) return;
+                btn.disabled = true;
+                try {
+                    const res  = await fetch(`/panel/projects/${name}`, { method: "DELETE" });
+                    const data = await res.json();
+                    if (data.ok) {
+                        btn.closest(".relative")?.remove();
+                    } else {
+                        await cdnAlert(`Delete failed: ${data.error}`, { title: "Delete failed" });
+                        btn.disabled = false;
+                    }
+                } catch (err) {
+                    await cdnAlert(`Delete failed: ${err.message}`, { title: "Delete failed" });
+                    btn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CDN Panel — Sign in</title>
+    <link rel="stylesheet" href="{{ url_for('panel.static', filename='tailwind.css') }}">
+    <link rel="stylesheet" href="{{ url_for('panel.static', filename='style.css') }}">
+</head>
+<body class="h-full bg-slate-50 dark:bg-zinc-950 flex items-center justify-center px-4">
+
+    <div class="w-full max-w-sm space-y-5">
+        <!-- Logo -->
+        <div class="text-center">
+            <div class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                CDN<span class="text-brand-500">.</span>
+            </div>
+            <p class="mt-1.5 text-sm text-slate-400 dark:text-zinc-500">Sign in to your panel</p>
+        </div>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+        <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20
+                    rounded-xl px-4 py-3 text-sm text-red-600 dark:text-red-400 text-center">
+            {{ msg }}
+        </div>
+        {% endfor %}
+        {% endwith %}
+
+        <!-- Form card -->
+        <form method="post" action="{{ url_for('panel.login_post') }}"
+              class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800
+                     rounded-2xl p-7 space-y-4 shadow-sm dark:shadow-none">
+            <div class="space-y-1.5">
+                <label for="username" class="block text-sm font-medium text-slate-700 dark:text-zinc-300">
+                    Username
+                </label>
+                <input type="text" id="username" name="username" required autofocus autocomplete="username"
+                    class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700
+                           text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-sm
+                           placeholder-slate-300 dark:placeholder-zinc-600
+                           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+                           transition-colors">
+            </div>
+            <div class="space-y-1.5">
+                <label for="password" class="block text-sm font-medium text-slate-700 dark:text-zinc-300">
+                    Password
+                </label>
+                <input type="password" id="password" name="password" required autocomplete="current-password"
+                    class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700
+                           text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-sm
+                           placeholder-slate-300 dark:placeholder-zinc-600
+                           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+                           transition-colors">
+            </div>
+            <button type="submit"
+                class="w-full bg-brand-600 hover:bg-brand-500 active:bg-brand-700 text-white
+                       font-semibold rounded-xl px-4 py-2.5 text-sm transition-colors">
+                Sign in
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

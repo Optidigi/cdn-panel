@@ -1,0 +1,219 @@
+/* ── Theme transition (only fires during explicit toggle, never on page load) */
+.cdn-transitioning *, .cdn-transitioning *::before, .cdn-transitioning *::after {
+    transition-property: background-color, border-color, color;
+    transition-duration: 150ms;
+    transition-timing-function: ease;
+}
+
+/* ── No-transition guard (suppresses all transitions during init dark-class flip) */
+.cdn-no-transition *, .cdn-no-transition *::before, .cdn-no-transition *::after {
+    transition: none !important;
+}
+
+/* ── Tab button base ─────────────────────────────────────────────────────── */
+.tab-btn {
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    color: #94a3b8;          /* slate-400 */
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    transition: color 0.15s, border-color 0.15s;
+}
+.tab-btn:hover {
+    color: #64748b;          /* slate-500 */
+}
+.dark .tab-btn {
+    color: #71717a;          /* zinc-500 */
+}
+.dark .tab-btn:hover {
+    color: #d4d4d8;          /* zinc-200 */
+}
+
+/* ── Tab active state ────────────────────────────────────────────────────── */
+.tab-btn.tab-active {
+    border-bottom-color: #408A71;   /* brand-500 */
+    color: #347360;                 /* brand-600 */
+}
+.dark .tab-btn.tab-active {
+    border-bottom-color: #408A71;
+    color: #ffffff;
+}
+
+/* ── Tab count badge ─────────────────────────────────────────────────────── */
+.tabcount {
+    background: #f1f5f9;    /* slate-100 */
+    color: #94a3b8;         /* slate-400 */
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 99px;
+    transition: background 0.15s, color 0.15s;
+}
+.dark .tabcount {
+    background: #27272a;    /* zinc-800 */
+    color: #71717a;         /* zinc-500 */
+}
+.tab-btn.tab-active .tabcount {
+    background: #edf7f3;    /* brand-50 */
+    color: #347360;         /* brand-600 */
+}
+.dark .tab-btn.tab-active .tabcount {
+    background: rgba(64, 138, 113, 0.2);
+    color: #70bfa9;         /* brand-300 */
+}
+
+/* ── Drop zone pulse ─────────────────────────────────────────────────────── */
+#drop-zone.border-brand-500 {
+    animation: pulse-border 1.2s ease-in-out infinite;
+}
+@keyframes pulse-border {
+    0%, 100% { border-color: rgb(64 138 113); }
+    50%       { border-color: rgb(112 191 169); }
+}
+
+/* ── Progress bar shimmer ────────────────────────────────────────────────── */
+#upload-progress-bar {
+    position: relative;
+    overflow: hidden;
+}
+#upload-progress-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+    animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(200%); }
+}
+
+/* ── Panel fade-in ───────────────────────────────────────────────────────── */
+[data-panel]:not(.hidden) {
+    animation: fadeIn 0.12s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Custom select dropdown ──────────────────────────────────────────────── */
+#category-dropdown:not(.hidden) {
+    animation: dropIn 0.1s ease-out;
+}
+@keyframes dropIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Tab bar: hide scrollbar visually, keep scroll functional ────────────── */
+.tabs-bar {
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* IE/Edge */
+}
+.tabs-bar::-webkit-scrollbar {
+    display: none;                  /* Chrome/Safari */
+}
+
+/* ── Tab delete button (reveal on hover) ─────────────────────────────────── */
+[data-tab-group] [data-delete-tab] {
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+[data-tab-group]:hover [data-delete-tab] {
+    opacity: 1;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+#cdn-modal { display: none; }
+
+#cdn-modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+    background: rgb(0 0 0 / 0.55);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+#cdn-modal-overlay.cdn-modal-open { opacity: 1; }
+
+#cdn-modal-box {
+    width: 100%; max-width: 23rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.125rem;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.35);
+    transform: scale(0.94);
+    transition: transform 0.15s ease;
+}
+#cdn-modal-overlay.cdn-modal-open #cdn-modal-box { transform: scale(1); }
+.dark #cdn-modal-box { background: #18181b; border-color: #27272a; }
+
+#cdn-modal-header {
+    display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.25rem;
+}
+#cdn-modal-icon-wrap {
+    width: 2.25rem; height: 2.25rem; border-radius: 9999px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+}
+#cdn-modal-icon-wrap.danger { background: rgb(239 68 68 / 0.12); color: #ef4444; }
+.dark #cdn-modal-icon-wrap.danger { background: rgb(239 68 68 / 0.18); }
+#cdn-modal-icon-wrap.info   { background: rgb(64 138 113 / 0.12); color: #408A71; }
+.dark #cdn-modal-icon-wrap.info   { background: rgb(64 138 113 / 0.18); }
+#cdn-modal-icon-svg { width: 1rem; height: 1rem; }
+
+.cdn-modal-text { min-width: 0; flex: 1; }
+#cdn-modal-title {
+    font-weight: 600; font-size: 0.875rem;
+    color: #0f172a; margin: 0;
+}
+.dark #cdn-modal-title { color: #ffffff; }
+#cdn-modal-msg {
+    margin-top: 0.25rem; font-size: 0.875rem;
+    color: #64748b; word-break: break-word; margin-bottom: 0;
+}
+.dark #cdn-modal-msg { color: #a1a1aa; }
+
+#cdn-modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+.cdn-modal-btn {
+    padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500;
+    border-radius: 0.75rem; border: none; cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    line-height: 1.25;
+}
+.cdn-modal-btn-cancel { background: transparent; color: #64748b; }
+.cdn-modal-btn-cancel:hover { background: #f1f5f9; }
+.dark .cdn-modal-btn-cancel { color: #a1a1aa; }
+.dark .cdn-modal-btn-cancel:hover { background: #27272a; }
+.cdn-modal-btn-danger { background: #ef4444; color: #fff; font-weight: 600; }
+.cdn-modal-btn-danger:hover { background: #dc2626; }
+.cdn-modal-btn-primary { background: #408A71; color: #fff; font-weight: 600; }
+.cdn-modal-btn-primary:hover { background: #347360; }
+
+/* ── Selected image card ─────────────────────────────────────────────────── */
+[data-file-card].is-selected {
+    outline: 2px solid #408A71;
+    outline-offset: -2px;
+}
+[data-file-card].is-selected::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(64, 138, 113, 0.15);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── Misc ────────────────────────────────────────────────────────────────── */
+input[type="checkbox"].select-checkbox:checked { opacity: 1 !important; }
+select { -webkit-appearance: none; appearance: none; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(148 163 184 / 0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(148 163 184 / 0.45); }
