@@ -47,7 +47,7 @@ Set via `.env` at the stack root on the server. Never committed to git.
 
 ```bash
 pip install -r requirements.txt
-PANEL_PASSWORD=dev SECRET_KEY=dev flask --app app run --debug
+PANEL_USERNAME=admin PANEL_PASSWORD_HASH=$(python -c "import bcrypt; print(bcrypt.hashpw(b'dev', bcrypt.gensalt()).decode())") PANEL_SECRET_KEY=dev flask --app app run --debug
 ```
 
 The panel will be available at `http://localhost:5000/panel`.
