@@ -33,9 +33,13 @@ docker compose up -d image-processor
 
 | Variable | Default | Description |
 |---|---|---|
-| `CDN_ROOT` | `/data/cdn` | Root path for CDN file storage |
-| `PANEL_PASSWORD` | — | Login password for the panel UI |
-| `SECRET_KEY` | — | Flask session secret key |
+| `PANEL_USERNAME` | — | Login username |
+| `PANEL_PASSWORD_HASH` | — | Bcrypt hash of the login password |
+| `PANEL_SECRET_KEY` | — | Flask session secret key |
+| `PANEL_SESSION_TIMEOUT` | — | Session lifetime in seconds (e.g. `86400`) |
+| `MAX_UPLOAD_SIZE_MB` | — | Upload size limit in MB |
+| `CDN_BASE_URL` | — | Public base URL for the CDN (e.g. `https://cdn.optidigi.nl`) |
+| `CDN_ROOT` | `/data/cdn` | Container-internal path for CDN file storage |
 
 Set via `.env` at the stack root on the server. Never committed to git.
 
